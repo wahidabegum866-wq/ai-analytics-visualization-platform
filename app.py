@@ -1,5 +1,7 @@
 import streamlit as st
 import pandas as pd
+import plotly.express as px
+import plotly.graph_objects as go
 
 # Page Configuration
 st.set_page_config(
@@ -181,7 +183,7 @@ elif menu == "🧹 Data Preprocessing":
 
             st.session_state["df"] = df
 
-            st.success("Missing values filled successfully!") 
+        st.success("Missing values filled successfully!") 
 
         st.subheader("👀 Processed Dataset Preview")
 
@@ -190,9 +192,133 @@ elif menu == "🧹 Data Preprocessing":
 
 # Visualization Page
 elif menu == "📈 Visualization":
-    st.title("📈 Visualization")
-    st.info("Coming Soon...")
 
+    st.title("📈 Data Visualization")
+
+    if "df" not in st.session_state:
+
+        st.warning("Please upload a dataset first.")
+
+    else:
+
+        df = st.session_state["df"]
+
+        chart_type = st.selectbox(
+            "Select Chart Type",
+            [
+                "Histogram",
+                "Bar Chart",
+                "Pie Chart",
+                "Box Plot",
+                "Correlation Heatmap"
+            ]
+        )
+
+        if chart_type == "Histogram":
+
+            numeric_cols = df.select_dtypes(include="number").columns
+
+            column = st.selectbox(
+                "Select Numeric Column",
+                numeric_cols
+            )
+
+            fig = px.histogram(
+                df,
+                x=column,
+                title=f"Distribution of {column}"
+            )
+            st.plotly_chart(fig, use_container_width=True)
+
+        elif chart_type == "Bar Chart":
+
+            categorical_cols = df.select_dtypes(exclude="number").columns
+
+            if len(categorical_cols) > 0:
+
+                column = st.selectbox(
+                    "Select Categorical Column",
+                    categorical_cols
+                )
+
+                value_counts = df[column].value_counts().reset_index()
+
+                value_counts.columns = [column, "Count"]
+
+                fig = px.bar(
+                    value_counts,
+                    x=column,
+                    y="Count",
+                    title=f"{column} Distribution"
+                )
+
+                st.plotly_chart(fig, use_container_width=True)
+
+            else:
+
+                st.warning("No categorical columns found.")
+
+        elif chart_type == "Pie Chart":
+
+            categorical_cols = df.select_dtypes(exclude="number").columns
+
+            if len(categorical_cols) > 0:
+
+                column = st.selectbox(
+                    "Select Categorical Column",
+                    categorical_cols
+                )
+
+                fig = px.pie(
+                    df,
+                    names=column,
+                    title=f"{column} Distribution"
+                )
+
+                st.plotly_chart(fig, use_container_width=True)
+
+            else:
+
+                st.warning("No categorical columns found.")   
+
+
+        elif chart_type == "Box Plot":
+
+            numeric_cols = df.select_dtypes(include="number").columns
+
+            column = st.selectbox(
+                "Select Numeric Column",
+                numeric_cols
+            )
+
+            fig = px.box(
+                df,
+                y=column,
+                title=f"Box Plot of {column}"
+            )
+
+            st.plotly_chart(fig, use_container_width=True)             
+
+        elif chart_type == "Correlation Heatmap":
+
+            numeric_df = df.select_dtypes(include="number")
+
+            corr_matrix = numeric_df.corr()
+
+            fig = go.Figure(
+                data=go.Heatmap(
+                    z=corr_matrix.values,
+                    x=corr_matrix.columns,
+                    y=corr_matrix.columns
+                )
+            )
+
+            fig.update_layout(
+                title="Correlation Heatmap"
+            )
+
+            st.plotly_chart(fig, use_container_width=True)
+            
 # Machine Learning Page
 elif menu == "🤖 Machine Learning":
     st.title("🤖 Machine Learning")
