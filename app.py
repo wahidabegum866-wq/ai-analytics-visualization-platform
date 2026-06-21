@@ -82,6 +82,40 @@ elif menu == "📂 Dataset":
             st.subheader("📈 Basic Statistics")
             st.dataframe(df.describe())
 
+            st.subheader("🔍 Missing Values")
+
+            missing = df.isnull().sum()
+
+            st.dataframe(
+                missing[missing > 0].reset_index().rename(
+                    columns={"index": "Column", 0: "Missing Values"}
+                )
+            )
+
+            st.subheader("📋 Duplicate Records")
+
+            duplicates = df.duplicated().sum()
+
+            st.write(f"Duplicate Rows: {duplicates}")
+
+
+            st.subheader("💾 Dataset Memory Usage")
+
+            memory_usage = df.memory_usage(deep=True).sum() / 1024
+
+            st.write(f"{memory_usage:.2f} KB")
+
+            st.subheader("📂 Column Classification")
+
+            numeric_cols = df.select_dtypes(include=["number"]).columns
+            categorical_cols = df.select_dtypes(exclude=["number"]).columns
+
+            st.write("Numeric Columns:")
+            st.write(list(numeric_cols))
+
+            st.write("Categorical Columns:")
+            st.write(list(categorical_cols))
+
         except Exception as e:
             st.error(f"Error loading file: {e}")
 
