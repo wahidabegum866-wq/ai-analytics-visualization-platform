@@ -210,7 +210,8 @@ elif menu == "📈 Visualization":
                 "Bar Chart",
                 "Pie Chart",
                 "Box Plot",
-                "Correlation Heatmap"
+                "Correlation Heatmap",
+                "Scatter Plot"
             ]
         )
 
@@ -318,7 +319,32 @@ elif menu == "📈 Visualization":
             )
 
             st.plotly_chart(fig, use_container_width=True)
-            
+        
+        elif chart_type == "Scatter Plot":
+
+            numeric_cols = df.select_dtypes(include="number").columns
+
+            x_col = st.selectbox(
+                "Select X-Axis",
+                numeric_cols,
+                key="scatter_x"
+            )
+
+            y_col = st.selectbox(
+                "Select Y-Axis",
+                numeric_cols,
+                key="scatter_y"
+            )
+
+            fig = px.scatter(
+                df,
+                x=x_col,
+                y=y_col,
+                title=f"{x_col} vs {y_col}"
+            )
+
+            st.plotly_chart(fig, use_container_width=True)
+
 # Machine Learning Page
 elif menu == "🤖 Machine Learning":
     st.title("🤖 Machine Learning")
