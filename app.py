@@ -1,4 +1,5 @@
 import streamlit as st
+import pandas as pd
 
 # Page Configuration
 st.set_page_config(
@@ -45,8 +46,44 @@ if menu == "🏠 Home":
 
 # Dataset Page
 elif menu == "📂 Dataset":
-    st.title("📂 Dataset Module")
-    st.info("Dataset Upload Module will be implemented next.")
+
+    st.title("📂 Dataset Upload Module")
+
+    uploaded_file = st.file_uploader(
+        "Upload a CSV or Excel file",
+        type=["csv", "xlsx"]
+    )
+
+    if uploaded_file is not None:
+
+        try:
+
+            if uploaded_file.name.endswith(".csv"):
+                df = pd.read_csv(uploaded_file)
+
+            else:
+                df = pd.read_excel(uploaded_file)
+
+            st.success("Dataset uploaded successfully!")
+
+            st.subheader("👀 Dataset Preview")
+            st.dataframe(df.head(10))
+
+            st.subheader("📊 Dataset Shape")
+            st.write(f"Rows: {df.shape[0]}")
+            st.write(f"Columns: {df.shape[1]}")
+
+            st.subheader("📝 Column Names")
+            st.write(list(df.columns))
+
+            st.subheader("🔍 Data Types")
+            st.dataframe(df.dtypes.astype(str))
+
+            st.subheader("📈 Basic Statistics")
+            st.dataframe(df.describe())
+
+        except Exception as e:
+            st.error(f"Error loading file: {e}")
 
 # Data Preprocessing Page
 elif menu == "🧹 Data Preprocessing":
