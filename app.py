@@ -149,6 +149,45 @@ elif menu == "🧹 Data Preprocessing":
         duplicates = df.duplicated().sum()
         st.write(f"Duplicate Rows: {duplicates}")
 
+        st.subheader("🗑 Remove Duplicates")
+
+        if st.button("Remove Duplicate Rows"):
+
+            df = df.drop_duplicates()
+
+            st.session_state["df"] = df
+
+            st.success("Duplicate rows removed successfully!")
+
+            st.write(f"New Shape: {df.shape}")
+
+        st.subheader("🩹 Fill Missing Values")
+
+
+        if st.button("Fill Missing Values"):
+
+            for col in df.columns:
+
+                if pd.api.types.is_numeric_dtype(df[col]):
+
+                    df[col] = df[col].fillna(df[col].median())
+
+                else:
+
+                    mode_value = df[col].mode()
+
+                    if not mode_value.empty:
+                        df[col] = df[col].fillna(mode_value[0])
+
+            st.session_state["df"] = df
+
+            st.success("Missing values filled successfully!") 
+
+        st.subheader("👀 Processed Dataset Preview")
+
+        st.dataframe(df.head(10))
+
+
 # Visualization Page
 elif menu == "📈 Visualization":
     st.title("📈 Visualization")
