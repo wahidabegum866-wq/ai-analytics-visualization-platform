@@ -66,6 +66,8 @@ elif menu == "📂 Dataset":
 
             st.success("Dataset uploaded successfully!")
 
+            st.session_state["df"] = df
+
             st.subheader("👀 Dataset Preview")
             st.dataframe(df.head(10))
 
@@ -121,8 +123,31 @@ elif menu == "📂 Dataset":
 
 # Data Preprocessing Page
 elif menu == "🧹 Data Preprocessing":
+
     st.title("🧹 Data Preprocessing")
-    st.info("Coming Soon...")
+
+    if "df" not in st.session_state:
+        st.warning("Please upload a dataset first.")
+    else:
+
+        df = st.session_state["df"]
+
+        st.subheader("Dataset Shape")
+        st.write(df.shape)
+
+        st.subheader("Missing Values")
+
+        missing = df.isnull().sum()
+        st.dataframe(
+            missing[missing > 0].reset_index().rename(
+                columns={"index": "Column", 0: "Missing Values"}
+            )
+        )
+
+        st.subheader("Duplicate Rows")
+
+        duplicates = df.duplicated().sum()
+        st.write(f"Duplicate Rows: {duplicates}")
 
 # Visualization Page
 elif menu == "📈 Visualization":
