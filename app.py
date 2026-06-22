@@ -2,6 +2,13 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import (
+    accuracy_score,
+    confusion_matrix,
+    classification_report
+)
 
 # Page Configuration
 st.set_page_config(
@@ -347,8 +354,69 @@ elif menu == "📈 Visualization":
 
 # Machine Learning Page
 elif menu == "🤖 Machine Learning":
+
     st.title("🤖 Machine Learning")
-    st.info("Coming Soon...")
+
+    if "df" not in st.session_state:
+
+        st.warning("Please upload a dataset first.")
+
+    else:
+
+        df = st.session_state["df"]
+
+        st.subheader("Target Variable")
+
+        target_column = st.selectbox(
+            "Select Target Column",
+            df.columns
+        )
+
+        if st.button("Train Logistic Regression"):
+
+            try:
+                X = df.drop(columns=[target_column])
+
+                y = df[target_column]
+                X = X.select_dtypes(include="number")
+
+                X_train, X_test, y_train, y_test = train_test_split(
+                    X,
+                    y,
+                    test_size=0.2,
+                    random_state=42
+                )
+
+                model = LogisticRegression(max_iter=1000)
+
+                model.fit(X_train, y_train)
+
+                y_pred = model.predict(X_test)
+
+                accuracy = accuracy_score(y_test, y_pred)
+
+                st.subheader("Model Accuracy")
+
+                st.write(f"{accuracy * 100:.2f}%")
+
+                st.subheader("Confusion Matrix")
+
+                cm = confusion_matrix(y_test, y_pred)
+
+                st.dataframe(cm)
+
+                st.subheader("Classification Report")
+
+                report = classification_report(
+                    y_test,
+                    y_pred,
+                    output_dict=True
+                )
+
+                st.dataframe(pd.DataFrame(report).transpose())
+            except Exception as e:
+
+                st.error(f"Error training model: {e}")
 
 # AI Insights Page
 elif menu == "💡 AI Insights":
