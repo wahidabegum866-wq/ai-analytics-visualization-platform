@@ -420,8 +420,42 @@ elif menu == "🤖 Machine Learning":
 
 # AI Insights Page
 elif menu == "💡 AI Insights":
+
     st.title("💡 AI Insights")
-    st.info("Coming Soon...")
+
+    if "df" not in st.session_state:
+        st.warning("Please upload a dataset first.")
+
+    else:
+
+        df = st.session_state["df"]
+
+        st.subheader("📋 Dataset Summary")
+
+        st.write(f"Rows: {df.shape[0]}")
+        st.write(f"Columns: {df.shape[1]}")
+
+        st.write(f"Missing Values: {df.isnull().sum().sum()}")
+
+        st.write(f"Duplicate Rows: {df.duplicated().sum()}")
+
+        st.subheader("📈 Numerical Insights")
+
+        numeric_cols = df.select_dtypes(include="number").columns
+
+        for col in numeric_cols:
+
+            st.write(
+                f"{col}: Mean = {df[col].mean():.2f}, "
+                f"Min = {df[col].min()}, "
+                f"Max = {df[col].max()}"
+            )
+
+        st.subheader("🔗 Correlation Insights")
+
+        corr_matrix = df.select_dtypes(include="number").corr()
+
+        st.dataframe(corr_matrix)
 
 # Report Generation Page
 elif menu == "📄 Report Generation":
