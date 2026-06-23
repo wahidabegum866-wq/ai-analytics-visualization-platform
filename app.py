@@ -9,6 +9,8 @@ from sklearn.metrics import (
     confusion_matrix,
     classification_report
 )
+from reportlab.pdfgen import canvas
+import io
 
 # Page Configuration
 st.set_page_config(
@@ -459,8 +461,67 @@ elif menu == "💡 AI Insights":
 
 # Report Generation Page
 elif menu == "📄 Report Generation":
+
     st.title("📄 Report Generation")
-    st.info("Coming Soon...")
+
+    if "df" not in st.session_state:
+
+        st.warning("Please upload a dataset first.")
+
+    else:
+
+        df = st.session_state["df"]
+
+        st.write("Generate a PDF report for the current dataset.")
+
+        if st.button("Generate PDF Report"):
+            buffer = io.BytesIO()
+            pdf = canvas.Canvas(buffer)
+
+            pdf.setFont("Helvetica-Bold", 16)
+
+            pdf.drawString(
+                100,
+                800,
+                "AI Analytics Visualization Platform"
+            )
+
+            pdf.setFont("Helvetica", 12)
+
+            pdf.drawString(
+                100,
+                760,
+                f"Rows: {df.shape[0]}"
+            )
+
+            pdf.drawString(
+                100,
+                740,
+                f"Columns: {df.shape[1]}"
+            )
+
+            pdf.drawString(
+                100,
+                720,
+                f"Missing Values: {df.isnull().sum().sum()}"
+            )
+
+            pdf.drawString(
+                100,
+                700,
+                f"Duplicate Rows: {df.duplicated().sum()}"
+            )
+
+            pdf.save()
+            buffer.seek(0)
+
+            st.download_button(
+                label="📥 Download PDF Report",
+                data=buffer,
+                file_name="analytics_report.pdf",
+                mime="application/pdf"
+            )
+
 
 # About Page
 elif menu == "ℹ️ About":
