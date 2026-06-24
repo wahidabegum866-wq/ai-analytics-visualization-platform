@@ -11,6 +11,7 @@ from sklearn.metrics import (
 )
 from reportlab.pdfgen import canvas
 import io
+from datetime import datetime
 
 # Page Configuration
 st.set_page_config(
@@ -490,44 +491,108 @@ elif menu == "📄 Report Generation":
         st.write("Generate a PDF report for the current dataset.")
 
         if st.button("Generate PDF Report"):
+
             buffer = io.BytesIO()
+
             pdf = canvas.Canvas(buffer)
 
-            pdf.setFont("Helvetica-Bold", 16)
+            y = 800
 
+            pdf.setFont("Helvetica-Bold", 16)
             pdf.drawString(
-                100,
-                800,
-                "AI Analytics Visualization Platform"
+                50,
+                y,
+                "AI Analytics Visualization Report"
             )
+
+            y -= 40
 
             pdf.setFont("Helvetica", 12)
 
             pdf.drawString(
-                100,
-                760,
+                50,
+                y,
+                f"Generated On: {datetime.now().strftime('%d-%m-%Y %H:%M:%S')}"
+            )
+
+            y -= 40
+
+            pdf.setFont("Helvetica-Bold", 14)
+
+            pdf.drawString(
+                50,
+                y,
+                "Dataset Summary"
+            )
+
+            y -= 25
+
+            pdf.setFont("Helvetica", 12)
+
+            pdf.drawString(
+                50,
+                y,
                 f"Rows: {df.shape[0]}"
             )
 
+            y -= 20
+
             pdf.drawString(
-                100,
-                740,
+                50,
+                y,
                 f"Columns: {df.shape[1]}"
             )
 
+            y -= 20
+
             pdf.drawString(
-                100,
-                720,
+                50,
+                y,
                 f"Missing Values: {df.isnull().sum().sum()}"
             )
 
+            y -= 20
+
             pdf.drawString(
-                100,
-                700,
+                50,
+                y,
                 f"Duplicate Rows: {df.duplicated().sum()}"
             )
 
+            y -= 40
+
+            pdf.setFont("Helvetica-Bold", 14)
+
+            pdf.drawString(
+                50,
+                y,
+                "Numerical Insights"
+            )
+
+            y -= 25
+
+            pdf.setFont("Helvetica", 12)
+
+            numeric_cols = df.select_dtypes(
+                include="number"
+            ).columns
+
+            for col in numeric_cols:
+
+                pdf.drawString(
+                    50,
+                    y,
+                    f"{col}: Mean={df[col].mean():.2f}"
+                )
+
+                y -= 20
+
+                if y < 50:
+                    pdf.showPage()
+                    y = 800
+
             pdf.save()
+
             buffer.seek(0)
 
             st.download_button(
