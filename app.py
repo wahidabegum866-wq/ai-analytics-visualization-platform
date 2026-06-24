@@ -468,6 +468,42 @@ elif menu == "💡 AI Insights":
                 f"Min = {df[col].min()}, "
                 f"Max = {df[col].max()}"
             )
+        st.subheader("🤖 Smart Insights")
+
+        if "BMI" in df.columns:
+
+            avg_bmi = df["BMI"].mean()
+
+            if avg_bmi > 25:
+                st.warning(
+                    f"Average BMI is {avg_bmi:.2f}. Population appears overweight."
+                )
+
+        if "BloodPressure" in df.columns:
+
+            avg_bp = df["BloodPressure"].mean()
+
+            if avg_bp > 130:
+                st.warning(
+                    f"Average Blood Pressure is {avg_bp:.2f}. Elevated BP detected."
+                )
+
+        if "Glucose" in df.columns:
+
+            avg_glucose = df["Glucose"].mean()
+
+            if avg_glucose > 125:
+                st.warning(
+                    f"Average Glucose is {avg_glucose:.2f}. High glucose levels observed."
+                )
+
+        if "Effected" in df.columns:
+
+            affected_rate = df["Effected"].mean() * 100
+
+            st.info(
+                f"{affected_rate:.2f}% of records are marked as affected."
+            )
 
         st.subheader("🔗 Correlation Insights")
 
@@ -582,7 +618,7 @@ elif menu == "📄 Report Generation":
                 pdf.drawString(
                     50,
                     y,
-                    f"{col}: Mean={df[col].mean():.2f}"
+                    f"{col}: Mean={df[col].mean():.2f}, Min={df[col].min()}, Max={df[col].max()}"
                 )
 
                 y -= 20
