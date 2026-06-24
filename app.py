@@ -369,9 +369,16 @@ elif menu == "🤖 Machine Learning":
 
         st.subheader("Target Variable")
 
+        possible_targets = []
+
+        for col in df.columns:
+
+            if df[col].nunique() <= 20:
+                possible_targets.append(col)
+
         target_column = st.selectbox(
             "Select Target Column",
-            df.columns
+            possible_targets
         )
 
         if st.button("Train Logistic Regression"):
@@ -380,7 +387,15 @@ elif menu == "🤖 Machine Learning":
                 X = df.drop(columns=[target_column])
 
                 y = df[target_column]
-                X = X.select_dtypes(include="number")
+
+                if y.dtype == "object":
+
+                    y = pd.factorize(y)[0]
+
+                X = pd.get_dummies(
+                    X,
+                    drop_first=True
+                )
 
                 X_train, X_test, y_train, y_test = train_test_split(
                     X,
