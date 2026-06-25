@@ -199,6 +199,17 @@ elif menu == "🧹 Data Preprocessing":
 
         st.dataframe(df.head(10))
 
+        st.subheader("📥 Download Processed Dataset")
+
+        csv = df.to_csv(index=False)
+
+        st.download_button(
+            label="Download Cleaned Dataset",
+            data=csv,
+            file_name="processed_dataset.csv",
+            mime="text/csv"
+        )
+
         st.subheader("📊 Outlier Detection")
 
         numeric_cols = df.select_dtypes(include="number").columns
