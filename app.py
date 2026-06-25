@@ -199,6 +199,43 @@ elif menu == "🧹 Data Preprocessing":
 
         st.dataframe(df.head(10))
 
+        st.subheader("📊 Outlier Detection")
+
+        numeric_cols = df.select_dtypes(include="number").columns
+
+        selected_col = st.selectbox(
+            "Select Column for Outlier Detection",
+            numeric_cols
+        )
+
+        Q1 = df[selected_col].quantile(0.25)
+
+        Q3 = df[selected_col].quantile(0.75)
+
+        IQR = Q3 - Q1
+
+        lower_bound = Q1 - (1.5 * IQR)
+
+        upper_bound = Q3 + (1.5 * IQR)
+
+        outliers = df[
+            (df[selected_col] < lower_bound)
+    |
+            (df[selected_col] > upper_bound)
+        ]
+
+        st.write(
+            f"Number of Outliers Found: {len(outliers)}"
+        )
+
+        if len(outliers) > 0:
+
+            st.dataframe(outliers)
+
+        st.success(
+            f"{len(outliers)} outliers detected in {selected_col}"
+        )
+
 
 # Visualization Page
 elif menu == "📈 Visualization":
