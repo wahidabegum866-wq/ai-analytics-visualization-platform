@@ -3,7 +3,10 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LogisticRegression
+from sklearn.linear_model import (
+    LogisticRegression,
+    LinearRegression
+)
 from sklearn.metrics import (
     accuracy_score,
     confusion_matrix,
@@ -418,6 +421,14 @@ elif menu == "🤖 Machine Learning":
 
         st.subheader("Target Variable")
 
+        model_type = st.selectbox(
+            "Select Model",
+            [
+                "Logistic Regression",
+                "Linear Regression"
+            ]
+        )
+
         possible_targets = []
 
         for col in df.columns:
@@ -430,7 +441,7 @@ elif menu == "🤖 Machine Learning":
             possible_targets
         )
 
-        if st.button("Train Logistic Regression"):
+        if st.button("Train Model"):
 
             try:
                 X = df.drop(columns=[target_column])
@@ -453,37 +464,81 @@ elif menu == "🤖 Machine Learning":
                     random_state=42
                 )
 
-                model = LogisticRegression(max_iter=1000)
+                if model_type == "Logistic Regression":
 
-                model.fit(X_train, y_train)
+                    model = LogisticRegression(max_iter=1000)
 
-                y_pred = model.predict(X_test)
+                    model.fit(X_train, y_train)
 
-                accuracy = accuracy_score(y_test, y_pred)
+                    y_pred = model.predict(X_test)
 
-                st.subheader("Model Accuracy")
+                    accuracy = accuracy_score(
+                        y_test,
+                        y_pred
+                    )
 
-                st.write(f"{accuracy * 100:.2f}%")
+                    st.subheader("Model Accuracy")
 
-                st.subheader("Confusion Matrix")
+                    st.write(
+                        f"{accuracy * 100:.2f}%"
+                    )
 
-                cm = confusion_matrix(y_test, y_pred)
+                    st.subheader("Confusion Matrix")
 
-                st.dataframe(cm)
+                    cm = confusion_matrix(
+                        y_test,
+                        y_pred
+                    )
 
-                st.subheader("Classification Report")
+                    st.dataframe(cm)
 
-                report = classification_report(
-                    y_test,
-                    y_pred,
-                    output_dict=True
-                )
+                    st.subheader(
+                        "Classification Report"
+                    )
 
-                st.dataframe(pd.DataFrame(report).transpose())
+                    report = classification_report(
+                        y_test,
+                        y_pred,
+                        output_dict=True
+                    )
+
+                    st.dataframe(
+                        pd.DataFrame(report).transpose()
+                    )
+                
+                else:
+
+                    model = LinearRegression()
+
+                    model.fit(
+                        X_train,
+                        y_train
+                    )
+
+                    y_pred = model.predict(
+                        X_test
+                    )
+
+                    score = model.score(
+                        X_test,
+                        y_test
+                    )
+
+                    st.subheader(
+                        "Regression Score (R²)"
+                    )
+
+                    st.write(
+                        f"{score:.4f}"
+                    )
+
             except Exception as e:
 
-                st.error(f"Error training model: {e}")
+                st.error(
+                    f"Error training model: {e}"
+                )
 
+                
 # AI Insights Page
 elif menu == "💡 AI Insights":
 
