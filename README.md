@@ -22,6 +22,9 @@ into one complete analytics platform.
 
 ---
 
+## Live Demo
+🌐 https://ai-analytics-visualization-platform.streamlit.app/
+
 ## ✨ Features
 
 ### 📂 Dataset Analysis
